@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">GithubRepos</string>
+    <string name="app_name">GitHubRepos</string>
+    <string name="oauthUrl">https://github.com/login/oauth/authorize</string>
+    <string name="clientId" />
+    <string name="clientSecret" />
+    <string name="callbackUrl" />
+    <string name="authenticate">Authenticate</string>
+    <string name="load_user_repositories">Load user repositories</string>
+    <string name="your_comment">Your comment</string>
+    <string name="send_comment">Send comment</string>
 </resources>
