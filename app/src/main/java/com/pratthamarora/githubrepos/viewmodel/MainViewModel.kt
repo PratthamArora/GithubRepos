@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.pratthamarora.githubrepos.model.AuthToken
+import com.pratthamarora.githubrepos.model.GithubPR
 import com.pratthamarora.githubrepos.model.GithubRepo
 import com.pratthamarora.githubrepos.model.GithubService
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -14,13 +15,17 @@ import io.reactivex.schedulers.Schedulers
 class MainViewModel : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
+    val error = MutableLiveData<String>()
+
     private val _token = MutableLiveData<String>()
     val token: LiveData<String>
         get() = _token
     private val _repos = MutableLiveData<List<GithubRepo>>()
     val repos: LiveData<List<GithubRepo>>
         get() = _repos
-    val error = MutableLiveData<String>()
+    private val _prs = MutableLiveData<List<GithubPR>>()
+    val prs: LiveData<List<GithubPR>>
+        get() = _prs
 
     fun getToken(clientId: String, clientSecret: String, code: String) {
         compositeDisposable.add(
@@ -57,6 +62,27 @@ class MainViewModel : ViewModel() {
 
                 })
         )
+    }
+
+    fun loadPRs(token: String, owner: String?, repo: String?) {
+        if (owner != null && repo != null) {
+            compositeDisposable.add(
+                GithubService.getUserData(token).getPRs(owner, repo)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(object : DisposableSingleObserver<List<GithubPR>>() {
+                        override fun onSuccess(t: List<GithubPR>) {
+                            _prs.value = t
+                        }
+
+                        override fun onError(e: Throwable) {
+                            e.printStackTrace()
+                            error.value = e.localizedMessage
+                        }
+
+                    })
+            )
+        }
     }
 
     override fun onCleared() {

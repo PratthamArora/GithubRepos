@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.pratthamarora.githubrepos.R
+import com.pratthamarora.githubrepos.model.GithubRepo
 import com.pratthamarora.githubrepos.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -42,6 +43,12 @@ class MainActivity : AppCompatActivity() {
                 id: Long
             ) {
                 // Load PullRequests
+                if (parent?.selectedItem is GithubRepo) {
+                    val currentRepo = parent.selectedItem as GithubRepo
+                    authToken?.let {
+                        viewModel.loadPRs(it, currentRepo.owner.login, currentRepo.name)
+                    }
+                }
             }
         }
 
@@ -114,6 +121,31 @@ class MainActivity : AppCompatActivity() {
                     isEnabled = false
                 }
             }
+        })
+
+        viewModel.prs.observe(this, Observer {
+            if (!it.isNullOrEmpty()) {
+                val spinnerAdapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    it
+                )
+                prsSpinner.apply {
+                    adapter = spinnerAdapter
+                    isEnabled = true
+                }
+            } else {
+                val spinnerAdapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    arrayListOf("No Pull Requests")
+                )
+                prsSpinner.apply {
+                    adapter = spinnerAdapter
+                    isEnabled = false
+                }
+            }
+
         })
     }
 
