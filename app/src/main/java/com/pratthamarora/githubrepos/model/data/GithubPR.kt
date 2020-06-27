@@ -1,6 +1,7 @@
-package com.pratthamarora.githubrepos.model
+package com.pratthamarora.githubrepos.model.data
 
 import com.google.gson.annotations.SerializedName
+import com.pratthamarora.githubrepos.model.data.GithubOwner
 
 data class GithubPR(
     val id: String?,

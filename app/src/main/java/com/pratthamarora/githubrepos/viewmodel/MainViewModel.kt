@@ -3,9 +3,9 @@ package com.pratthamarora.githubrepos.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.pratthamarora.githubrepos.model.AuthToken
-import com.pratthamarora.githubrepos.model.GithubPR
-import com.pratthamarora.githubrepos.model.GithubRepo
+import com.pratthamarora.githubrepos.model.data.AuthToken
+import com.pratthamarora.githubrepos.model.data.GithubPR
+import com.pratthamarora.githubrepos.model.data.GithubRepo
 import com.pratthamarora.githubrepos.model.GithubService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

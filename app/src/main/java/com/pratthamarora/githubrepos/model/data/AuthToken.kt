@@ -1,4 +1,4 @@
-package com.pratthamarora.githubrepos.model
+package com.pratthamarora.githubrepos.model.data
 
 import com.google.gson.annotations.SerializedName
 
