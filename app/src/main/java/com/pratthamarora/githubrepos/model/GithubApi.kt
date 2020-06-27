@@ -5,6 +5,7 @@ import com.pratthamarora.githubrepos.model.data.GithubComments
 import com.pratthamarora.githubrepos.model.data.GithubPR
 import com.pratthamarora.githubrepos.model.data.GithubRepo
 import io.reactivex.Single
+import okhttp3.ResponseBody
 import retrofit2.http.*
 
 interface GithubApi {
@@ -32,4 +33,12 @@ interface GithubApi {
         @Path("repo") repo: String,
         @Path("issue_number") issueNumber: String
     ): Single<List<GithubComments>>
+
+    @POST("/repos/{owner}/{repo}/issues/{issue_number}/comments")
+    fun postComment(
+        @Path("owner") owner: String,
+        @Path("repo") repo: String,
+        @Path("issue_number") issueNumber: String,
+        @Body comment:GithubComments
+    ): Single<ResponseBody>
 }

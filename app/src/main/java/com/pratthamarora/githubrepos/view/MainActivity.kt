@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.pratthamarora.githubrepos.R
+import com.pratthamarora.githubrepos.model.data.GithubComments
 import com.pratthamarora.githubrepos.model.data.GithubPR
 import com.pratthamarora.githubrepos.model.data.GithubRepo
 import com.pratthamarora.githubrepos.viewmodel.MainViewModel
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         prsSpinner.adapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_dropdown_item,
-            arrayListOf("Please select repository")
+            arrayListOf("Please select a repository")
         )
         prsSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -178,7 +179,7 @@ class MainActivity : AppCompatActivity() {
                 val spinnerAdapter = ArrayAdapter(
                     this,
                     android.R.layout.simple_spinner_dropdown_item,
-                    arrayListOf("No Pull Requests")
+                    arrayListOf("No Comments")
                 )
                 commentsSpinner.apply {
                     adapter = spinnerAdapter
@@ -188,6 +189,25 @@ class MainActivity : AppCompatActivity() {
                 postCommentButton.isEnabled = false
             }
 
+        })
+
+        viewModel.postComment.observe(this, Observer {
+            if (it) {
+                commentET.setText("")
+                Toast.makeText(this, "Comment Posted", Toast.LENGTH_SHORT).show()
+                authToken?.let { token ->
+                    val currentRepo = repositoriesSpinner.selectedItem as GithubRepo
+                    val currentPr = prsSpinner.selectedItem as GithubPR
+                    viewModel.loadComments(
+                        token,
+                        currentPr.user?.login,
+                        currentRepo.name,
+                        currentPr.number
+                    )
+                }
+            } else {
+                Toast.makeText(this, "Cannot post comment", Toast.LENGTH_SHORT).show()
+            }
         })
     }
 
@@ -222,7 +242,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onPostComment(view: View) {
-
+        val comment = commentET.text.toString()
+        if (comment.isNotEmpty()) {
+            val currentRepo = repositoriesSpinner.selectedItem as GithubRepo
+            val currentPr = prsSpinner.selectedItem as GithubPR
+            authToken?.let {
+                viewModel.postComment(
+                    it,
+                    currentRepo,
+                    currentPr.number,
+                    GithubComments(comment, null)
+                )
+            }
+        } else {
+            Toast.makeText(this, "Please enter a comment", Toast.LENGTH_SHORT).show()
+        }
     }
 
 }

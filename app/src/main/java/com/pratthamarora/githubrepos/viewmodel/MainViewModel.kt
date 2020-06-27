@@ -12,6 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import okhttp3.ResponseBody
 
 class MainViewModel : ViewModel() {
 
@@ -30,6 +31,9 @@ class MainViewModel : ViewModel() {
     private val _comments = MutableLiveData<List<GithubComments>>()
     val comments: LiveData<List<GithubComments>>
         get() = _comments
+    private val _postComment = MutableLiveData<Boolean>()
+    val postComment: LiveData<Boolean>
+        get() = _postComment
 
     fun getToken(clientId: String, clientSecret: String, code: String) {
         compositeDisposable.add(
@@ -98,6 +102,28 @@ class MainViewModel : ViewModel() {
                     .subscribeWith(object : DisposableSingleObserver<List<GithubComments>>() {
                         override fun onSuccess(t: List<GithubComments>) {
                             _comments.value = t
+                        }
+
+                        override fun onError(e: Throwable) {
+                            e.printStackTrace()
+                            error.value = e.localizedMessage
+                        }
+
+                    })
+            )
+        }
+    }
+
+    fun postComment(token: String, repo: GithubRepo, issue: String?, comment: GithubComments) {
+        if (repo.owner.login != null && repo.name != null && issue != null) {
+            compositeDisposable.add(
+                GithubService.getUserData(token)
+                    .postComment(repo.owner.login, repo.name, issue, comment)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(object : DisposableSingleObserver<ResponseBody>() {
+                        override fun onSuccess(t: ResponseBody) {
+                            _postComment.value = true
                         }
 
                         override fun onError(e: Throwable) {
