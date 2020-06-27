@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.pratthamarora.githubrepos.R
 import com.pratthamarora.githubrepos.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -15,6 +17,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
+    var authToken: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +78,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
+        viewModel.token.observe(this, Observer { token ->
+            if (token.isNotEmpty()) {
+                authToken = token
+                Toast.makeText(this, "Authenticated Successfully", Toast.LENGTH_SHORT).show()
+                loadReposButton.isEnabled = true
+            } else {
+                Toast.makeText(this, "Authentication Failed", Toast.LENGTH_SHORT).show()
+            }
+        })
 
+        viewModel.error.observe(this, Observer {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        })
     }
 
     fun onAuthenticate(view: View) {
@@ -93,6 +109,11 @@ class MainActivity : AppCompatActivity() {
         val callbackUrl = getString(R.string.callbackUrl)
         if (uri != null && uri.toString().startsWith(callbackUrl)) {
             val code = uri.getQueryParameter("code")
+            code?.let {
+                val clientId = getString(R.string.clientId)
+                val clientSecret = getString(R.string.clientSecret)
+                viewModel.getToken(clientId, clientSecret, code)
+            }
         }
     }
 
