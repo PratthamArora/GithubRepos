@@ -1,5 +1,7 @@
 package com.pratthamarora.githubrepos.view
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -76,7 +78,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onAuthenticate(view: View) {
+        val oAuthUrl = getString(R.string.oauthUrl)
+        val clientId = getString(R.string.clientId)
+        val callbackUrl = getString(R.string.callbackUrl)
+        Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("$oAuthUrl?client_id=$clientId&scope=repo&redirect_uri=$callbackUrl")
+        ).also { startActivity(it) }
+    }
 
+    override fun onResume() {
+        super.onResume()
+        val uri = intent.data
+        val callbackUrl = getString(R.string.callbackUrl)
+        if (uri != null && uri.toString().startsWith(callbackUrl)) {
+            val code = uri.getQueryParameter("code")
+        }
     }
 
     fun onLoadRepos(view: View) {
