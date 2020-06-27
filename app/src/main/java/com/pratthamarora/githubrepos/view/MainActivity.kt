@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.pratthamarora.githubrepos.R
+import com.pratthamarora.githubrepos.model.data.GithubPR
 import com.pratthamarora.githubrepos.model.data.GithubRepo
 import com.pratthamarora.githubrepos.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -70,6 +71,18 @@ class MainActivity : AppCompatActivity() {
                 id: Long
             ) {
                 // Load comments
+                if (parent?.selectedItem is GithubPR) {
+                    val githubPR = parent.selectedItem as GithubPR
+                    val currentRepo = repositoriesSpinner.selectedItem as GithubRepo
+                    authToken?.let {
+                        viewModel.loadComments(
+                            it,
+                            githubPR.user?.login,
+                            currentRepo.name,
+                            githubPR.number
+                        )
+                    }
+                }
             }
         }
 
@@ -77,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         commentsSpinner.adapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_dropdown_item,
-            arrayListOf("Please select PR")
+            arrayListOf("Please select a PR")
         )
 
 
@@ -144,6 +157,35 @@ class MainActivity : AppCompatActivity() {
                     adapter = spinnerAdapter
                     isEnabled = false
                 }
+            }
+
+        })
+
+        viewModel.comments.observe(this, Observer {
+            if (!it.isNullOrEmpty()) {
+                val spinnerAdapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    it
+                )
+                commentsSpinner.apply {
+                    adapter = spinnerAdapter
+                    isEnabled = true
+                }
+                commentET.isEnabled = true
+                postCommentButton.isEnabled = true
+            } else {
+                val spinnerAdapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    arrayListOf("No Pull Requests")
+                )
+                commentsSpinner.apply {
+                    adapter = spinnerAdapter
+                    isEnabled = false
+                }
+                commentET.isEnabled = false
+                postCommentButton.isEnabled = false
             }
 
         })
