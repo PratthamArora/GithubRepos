@@ -1,6 +1,7 @@
 package com.pratthamarora.githubrepos.model
 
 import com.pratthamarora.githubrepos.model.data.AuthToken
+import com.pratthamarora.githubrepos.model.data.GithubComments
 import com.pratthamarora.githubrepos.model.data.GithubPR
 import com.pratthamarora.githubrepos.model.data.GithubRepo
 import io.reactivex.Single
@@ -24,4 +25,11 @@ interface GithubApi {
         @Path("owner") owner: String,
         @Path("repo") repo: String
     ): Single<List<GithubPR>>
+
+    @GET("/repos/{owner}/{repo}/issues/{issue_number}/comments")
+    fun getComments(
+        @Path("owner") owner: String,
+        @Path("repo") repo: String,
+        @Path("issue_number") issueNumber: String
+    ): Single<List<GithubComments>>
 }

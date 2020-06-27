@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">GitHubRepo</string>
     <string name="oauthUrl">https://github.com/login/oauth/authorize</string>
-
     <string name="authenticate">Authenticate</string>
     <string name="load_user_repositories">Load user repositories</string>
     <string name="your_comment">Your comment</string>
     <string name="send_comment">Send comment</string>
+
 </resources>
