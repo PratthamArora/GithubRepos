@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.pratthamarora.githubrepos.model.AuthToken
+import com.pratthamarora.githubrepos.model.GithubRepo
 import com.pratthamarora.githubrepos.model.GithubService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -16,6 +17,9 @@ class MainViewModel : ViewModel() {
     private val _token = MutableLiveData<String>()
     val token: LiveData<String>
         get() = _token
+    private val _repos = MutableLiveData<List<GithubRepo>>()
+    val repos: LiveData<List<GithubRepo>>
+        get() = _repos
     val error = MutableLiveData<String>()
 
     fun getToken(clientId: String, clientSecret: String, code: String) {
@@ -32,6 +36,25 @@ class MainViewModel : ViewModel() {
                         e.printStackTrace()
                         error.value = e.localizedMessage
                     }
+                })
+        )
+    }
+
+    fun loadRepos(token: String) {
+        compositeDisposable.add(
+            GithubService.getUserData(token).getAllRepos()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<List<GithubRepo>>() {
+                    override fun onSuccess(t: List<GithubRepo>) {
+                        _repos.value = t
+                    }
+
+                    override fun onError(e: Throwable) {
+                        e.printStackTrace()
+                        error.value = e.localizedMessage
+                    }
+
                 })
         )
     }

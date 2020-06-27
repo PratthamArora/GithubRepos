@@ -91,6 +91,30 @@ class MainActivity : AppCompatActivity() {
         viewModel.error.observe(this, Observer {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         })
+
+        viewModel.repos.observe(this, Observer {
+            if (!it.isNullOrEmpty()) {
+                val spinnerAdapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    it
+                )
+                repositoriesSpinner.apply {
+                    adapter = spinnerAdapter
+                    isEnabled = true
+                }
+            } else {
+                val spinnerAdapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    arrayListOf("No Repos")
+                )
+                repositoriesSpinner.apply {
+                    adapter = spinnerAdapter
+                    isEnabled = false
+                }
+            }
+        })
     }
 
     fun onAuthenticate(view: View) {
@@ -118,7 +142,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onLoadRepos(view: View) {
-
+        authToken?.let {
+            viewModel.loadRepos(it)
+        }
     }
 
     fun onPostComment(view: View) {

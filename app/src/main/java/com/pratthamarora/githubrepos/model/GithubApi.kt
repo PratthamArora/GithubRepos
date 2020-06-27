@@ -12,4 +12,7 @@ interface GithubApi {
         @Field("client_secret") clientSecret: String,
         @Field("code") code: String
     ): Single<AuthToken>
+
+    @GET("user/repos")
+    fun getAllRepos(): Single<List<GithubRepo>>
 }
