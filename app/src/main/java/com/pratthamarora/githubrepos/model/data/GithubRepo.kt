@@ -1,4 +1,6 @@
-package com.pratthamarora.githubrepos.model
+package com.pratthamarora.githubrepos.model.data
+
+import com.pratthamarora.githubrepos.model.data.GithubOwner
 
 data class GithubRepo(
     val name: String?,

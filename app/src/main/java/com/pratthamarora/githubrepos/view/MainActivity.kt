@@ -11,7 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.pratthamarora.githubrepos.R
-import com.pratthamarora.githubrepos.model.GithubRepo
+import com.pratthamarora.githubrepos.model.data.GithubRepo
 import com.pratthamarora.githubrepos.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 

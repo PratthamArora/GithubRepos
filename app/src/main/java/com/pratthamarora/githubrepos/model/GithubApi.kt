@@ -1,5 +1,8 @@
 package com.pratthamarora.githubrepos.model
 
+import com.pratthamarora.githubrepos.model.data.AuthToken
+import com.pratthamarora.githubrepos.model.data.GithubPR
+import com.pratthamarora.githubrepos.model.data.GithubRepo
 import io.reactivex.Single
 import retrofit2.http.*
 
